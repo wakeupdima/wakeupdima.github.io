@@ -49,6 +49,23 @@ const socials = [
   <a class="hero__scroll t-label" href="#work">Scroll ↓</a>
 </section>
 
+<!-- Runs before paint: lock the mobile hero to the screen height at load.
+     Updated only when the width changes (rotation), not when the toolbar hides on scroll. -->
+<script is:inline>
+  (function () {
+    var root = document.documentElement;
+    var lastW = 0;
+    function lock() {
+      var w = window.innerWidth;
+      if (w === lastW) return;
+      lastW = w;
+      root.style.setProperty('--hero-h', window.innerHeight + 'px');
+    }
+    lock();
+    window.addEventListener('resize', lock);
+  })();
+</script>
+
 <style>
   .hero {
     position: relative;
@@ -124,7 +141,10 @@ const socials = [
 
   /* Mobile: centered stack — small photo on top, then greeting, line and socials */
   @media (max-width: 767px) {
-    .hero { min-height: 100svh; }
+    /* Height of the first screen, fixed once by the inline script below.
+       100svh as a fallback; it changes when the browser toolbar shows/hides in some
+       browsers (in-app webviews), which made the hero resize and stutter while scrolling. */
+    .hero { min-height: var(--hero-h, 100svh); }
     .hero__row {
       flex-direction: column;
       align-items: center;

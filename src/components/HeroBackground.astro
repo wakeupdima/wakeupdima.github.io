@@ -242,17 +242,28 @@ import heroTone from '../assets/home/hero-tone.png';
     let last = 0;
     const t0 = performance.now();
 
+    let sized = false;
+
     function resize() {
       const r = canvas.getBoundingClientRect();
       if (!r.width || !r.height) return;
       let cell = CELL;
       while ((r.width / cell) * (r.height / cell) > MAX_CELLS) cell += 0.5;
-      canvas.width = Math.max(1, Math.round(r.width / cell));
-      canvas.height = Math.max(1, Math.round(r.height / cell));
+      const w = Math.max(1, Math.round(r.width / cell));
+      const h = Math.max(1, Math.round(r.height / cell));
+      // Setting width/height clears the canvas and reallocates it: only do it on a real change
+      if (w === canvas.width && h === canvas.height && sized) return;
+      sized = true;
+      canvas.width = w;
+      canvas.height = h;
       gl!.viewport(0, 0, canvas.width, canvas.height);
       const s = Math.max(r.width / IMAGE_W, r.height / IMAGE_H);
       gl!.uniform2f(uRes, canvas.width, canvas.height);
       gl!.uniform2f(uView, r.width / s / IMAGE_W, r.height / s / IMAGE_H);
+      if (texReady) {
+        gl!.uniform1f(uTime, (performance.now() - t0) / 1000);
+        gl!.drawArrays(gl!.TRIANGLES, 0, 3);
+      }
     }
 
     function frame(now: number) {
