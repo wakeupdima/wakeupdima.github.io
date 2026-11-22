@@ -25,7 +25,8 @@ interface Props {
 const { title = site.title, description = site.description, ogImage, ogType = 'website' } = Astro.props;
 
 const siteUrl = Astro.site ?? new URL('https://wakeupdima.github.io');
-const pageUrl = new URL(Astro.url.pathname, siteUrl).href;
+// Clean URL (no .html), matching how the site links to its pages
+const pageUrl = new URL(Astro.url.pathname.replace(/(index)?\.html$/, ''), siteUrl).href;
 
 let ogSrc = url('/og.jpg');
 let ogWidth = 1200;

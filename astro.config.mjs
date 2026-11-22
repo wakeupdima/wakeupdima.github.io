@@ -14,5 +14,7 @@ export default defineConfig({
   base,
   output: 'static',
   trailingSlash: 'ignore',
+  // about.html instead of about/index.html: GitHub Pages then serves /about directly, without a 301 to /about/
+  build: { format: 'file' },
   devToolbar: { enabled: false },
 });
