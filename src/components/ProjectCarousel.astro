@@ -358,24 +358,53 @@ const imgSizes = '(max-width: 767px) 100vw, 520px';
     });
 
     // Click on a side card brings it to the center.
+    // Side cards sit slightly "behind" the stage in 3D (negative translateZ), so the click
+    // target is often the stage itself. Find the card under the pointer by coordinates instead.
+    function cardAt(x: number, y: number): { kind: 'card'; el: HTMLElement } | { kind: 'ghost' } | null {
+      for (const el of document.elementsFromPoint(x, y)) {
+        if (!(el instanceof HTMLElement) || !stage.contains(el)) continue;
+        if (el.closest('[data-ghost]')) return getComputedStyle(ghost!).opacity === '0' ? null : { kind: 'ghost' };
+        const card = el.closest<HTMLElement>('[data-card]');
+        if (card && getComputedStyle(card).opacity !== '0') return { kind: 'card', el: card };
+      }
+      return null;
+    }
+
     let suppressClick = false;
     stage.addEventListener('click', (e) => {
       if (suppressClick) { e.preventDefault(); suppressClick = false; return; }
-      const target = e.target as HTMLElement;
-      if (target.closest('[data-ghost]')) {
+      const hit = cardAt(e.clientX, e.clientY);
+      if (!hit) return;
+      if (hit.kind === 'ghost') {
         e.preventDefault();
-        step(-farSide as 1 | -1);
-        step(-farSide as 1 | -1);
+        // Read the direction once: step() flips farSide
+        const dir = -farSide as 1 | -1;
+        step(dir);
+        step(dir);
         return;
       }
-      const card = target.closest<HTMLElement>('[data-card]');
-      if (!card) return;
-      const d = offset(Number(card.dataset.index));
-      if (d === 0) return;
+      const d = offset(Number(hit.el.dataset.index));
+      if (d === 0) {
+        // Center card: open the case study (also when the click landed on the stage, not the link)
+        if (!(e.target as HTMLElement).closest('a')) hit.el.querySelector('a')?.click();
+        return;
+      }
       e.preventDefault();
       if (Math.abs(d) === 1) step(d as 1 | -1);
-      else { step(farSide); step(farSide); }
+      else {
+        // Far card: two steps toward the side it sits on. Read the direction once: step() flips farSide
+        const dir = farSide;
+        step(dir);
+        step(dir);
+      }
     });
+
+    // Show a pointer cursor over any clickable card
+    stage.addEventListener('pointermove', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      stage.style.cursor = cardAt(e.clientX, e.clientY) ? 'pointer' : '';
+    });
+    stage.addEventListener('pointerleave', () => (stage.style.cursor = ''));
 
     // Swipe
     let startX = 0;
