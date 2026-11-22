@@ -1,7 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import Icon from './Icon.astro';
-import heroBg from '../assets/home/hero-bg.png';
+import HeroBackground from './HeroBackground.astro';
 import portrait from '../assets/home/portrait.png';
 import { contacts } from '../data/site';
 
@@ -13,22 +13,7 @@ const socials = [
 ---
 
 <section class="hero" aria-labelledby="hero-title">
-  <div class="hero__bg" aria-hidden="true">
-    <!-- Pixel art: served as the original PNG (smaller than WebP and no smoothing artefacts) -->
-    <img
-      src={heroBg.src}
-      alt=""
-      width={heroBg.width}
-      height={heroBg.height}
-      loading="eager"
-      fetchpriority="high"
-      decoding="async"
-      class="hero__img"
-    />
-    <div class="hero__scrim hero__scrim--left"></div>
-    <div class="hero__scrim hero__scrim--edges"></div>
-  </div>
-
+  <HeroBackground />
 
   <div class="container hero__row">
     <div class="hero__intro">
@@ -74,42 +59,6 @@ const socials = [
     background: var(--color-hero-ink);
     color: var(--color-white);
     overflow: hidden;
-  }
-
-  .hero__bg {
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-  }
-  .hero__img {
-    position: absolute;
-    left: 0;
-    top: -90px;
-    width: 100%;
-    height: calc(100% + 180px);
-    max-width: none;
-    object-fit: cover;
-    object-position: center;
-    image-rendering: pixelated;
-  }
-  .hero__scrim { position: absolute; inset: 0; }
-  .hero__scrim--left {
-    background: linear-gradient(
-      to right,
-      color-mix(in srgb, var(--color-hero-ink) 90%, transparent) 0%,
-      color-mix(in srgb, var(--color-hero-ink) 82%, transparent) 45%,
-      color-mix(in srgb, var(--color-hero-ink) 30%, transparent) 66%,
-      color-mix(in srgb, var(--color-hero-ink) 0%, transparent) 80%
-    );
-  }
-  .hero__scrim--edges {
-    background: linear-gradient(
-      to bottom,
-      color-mix(in srgb, var(--color-hero-ink) 55%, transparent) 0%,
-      color-mix(in srgb, var(--color-hero-ink) 0%, transparent) 18%,
-      color-mix(in srgb, var(--color-hero-ink) 0%, transparent) 80%,
-      color-mix(in srgb, var(--color-hero-ink) 60%, transparent) 100%
-    );
   }
 
   .hero__row {
@@ -176,7 +125,6 @@ const socials = [
   /* Mobile: text first, portrait below, full scrim */
   @media (max-width: 767px) {
     .hero { min-height: 100svh; }
-    .hero__scrim--left { background: color-mix(in srgb, var(--color-hero-ink) 75%, transparent); }
     .hero__row {
       flex-direction: column;
       align-items: flex-start;

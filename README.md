@@ -11,6 +11,7 @@ Static site built with [Astro](https://astro.build). Design source: Figma (see `
 | `npm run build` | Build the site into `dist/` |
 | `npm run preview` | Preview the built site |
 | `node scripts/make-brand-images.mjs` | Regenerate `public/og.jpg`, `favicon.svg`, `apple-touch-icon.png` |
+| `node scripts/make-hero-tone.mjs` | Rebuild `src/assets/home/hero-tone.png` (input of the animated hero) after changing `hero-bg.png` |
 
 ## Where things live
 
