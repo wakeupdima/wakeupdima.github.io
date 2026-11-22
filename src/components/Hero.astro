@@ -136,6 +136,11 @@ const socials = [
       padding: 112px 0 88px;
     }
     .hero__line { font-size: 18px; line-height: 28px; }
-    .hero__photo { width: 280px; height: 340px; }
+    /* Photo spans the text column, edges aligned with the text */
+    .hero__photo {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 380 / 460;
+    }
   }
 </style>

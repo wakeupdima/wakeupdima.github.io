@@ -78,8 +78,17 @@ import heroTone from '../assets/home/hero-tone.png';
     );
   }
 
+  /* Mobile: text sits on top, so darken the top for contrast and let the moving landscape show below */
   @media (max-width: 767px) {
-    .hero-bg__scrim--left { background: color-mix(in srgb, var(--color-hero-ink) 75%, transparent); }
+    .hero-bg__scrim--left {
+      background: linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--color-hero-ink) 78%, transparent) 0%,
+        color-mix(in srgb, var(--color-hero-ink) 70%, transparent) 42%,
+        color-mix(in srgb, var(--color-hero-ink) 25%, transparent) 62%,
+        color-mix(in srgb, var(--color-hero-ink) 10%, transparent) 100%
+      );
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
