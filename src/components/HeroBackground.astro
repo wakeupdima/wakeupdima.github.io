@@ -78,15 +78,17 @@ import heroTone from '../assets/home/hero-tone.png';
     );
   }
 
-  /* Mobile: text sits on top, so darken the top for contrast and let the moving landscape show below */
+  /* Mobile: photo on top, text in the middle — darken behind the text for contrast,
+     let the moving landscape show around the photo and at the bottom */
   @media (max-width: 767px) {
     .hero-bg__scrim--left {
       background: linear-gradient(
         to bottom,
-        color-mix(in srgb, var(--color-hero-ink) 78%, transparent) 0%,
-        color-mix(in srgb, var(--color-hero-ink) 70%, transparent) 42%,
-        color-mix(in srgb, var(--color-hero-ink) 25%, transparent) 62%,
-        color-mix(in srgb, var(--color-hero-ink) 10%, transparent) 100%
+        color-mix(in srgb, var(--color-hero-ink) 45%, transparent) 0%,
+        color-mix(in srgb, var(--color-hero-ink) 50%, transparent) 30%,
+        color-mix(in srgb, var(--color-hero-ink) 76%, transparent) 46%,
+        color-mix(in srgb, var(--color-hero-ink) 76%, transparent) 80%,
+        color-mix(in srgb, var(--color-hero-ink) 35%, transparent) 100%
       );
     }
   }
