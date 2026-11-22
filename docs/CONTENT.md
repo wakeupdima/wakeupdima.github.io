@@ -25,7 +25,7 @@ Use this text exactly. Do not add or rewrite copy. Typographic apostrophes (’)
 
 **Hero**
 - H1: Hi there! I'm Dmytro Zaichenko.
-- Line: I'm a UI/UX designer, a student in Kyiv, and a casual chess player.
+- Line: I'm a UI/UX designer based in Kyiv. I work on web and mobile products, from research to UI.
 - Social buttons (aria-labels): Telegram, Behance, Email
 - Hint: Scroll ↓
 

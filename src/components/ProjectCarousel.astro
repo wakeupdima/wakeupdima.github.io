@@ -58,8 +58,16 @@ const imgSizes = '(max-width: 767px) 100vw, 520px';
     </div>
   </div>
 
-  <div class="carousel__ticks" aria-hidden="true">
-    {projects.map((_, i) => <span class:list={['carousel__tick', { 'is-active': i === 0 }]} data-tick={i}></span>)}
+  <div class="carousel__controls">
+    <button type="button" class="icon-btn" aria-label="Previous project" data-prev>
+      <Icon name="chevron-left" />
+    </button>
+    <div class="carousel__ticks" aria-hidden="true">
+      {projects.map((_, i) => <span class:list={['carousel__tick', { 'is-active': i === 0 }]} data-tick={i}></span>)}
+    </div>
+    <button type="button" class="icon-btn" aria-label="Next project" data-next>
+      <Icon name="chevron-right" />
+    </button>
   </div>
 
   <div class="carousel__caption">
@@ -75,34 +83,24 @@ const imgSizes = '(max-width: 767px) 100vw, 520px';
       ))}
     </div>
 
-    <div class="carousel__controls">
-      <div class="carousel__arrows">
-        <button type="button" class="icon-btn" aria-label="Previous project" data-prev>
-          <Icon name="chevron-left" />
-        </button>
-        <button type="button" class="icon-btn" aria-label="Next project" data-next>
-          <Icon name="chevron-right" />
-        </button>
-      </div>
-      {projects.map((p, i) => (
-        <div class="carousel__actions" data-actions={i} hidden={i !== 0}>
-          <a class="btn btn--secondary" href={url(`/work/${p.slug}`)}>
-            View case study<span class="visually-hidden">: {p.name}</span>
+    {projects.map((p, i) => (
+      <div class="carousel__actions" data-actions={i} hidden={i !== 0}>
+        {p.website && (
+          <a class="btn btn--ghost" href={p.website} target="_blank" rel="noopener">
+            Visit website ↗<span class="visually-hidden"> (opens in a new tab)</span>
           </a>
-          {p.website && (
-            <a class="btn btn--ghost" href={p.website} target="_blank" rel="noopener">
-              Visit website ↗<span class="visually-hidden"> (opens in a new tab)</span>
-            </a>
-          )}
-        </div>
-      ))}
-    </div>
+        )}
+        <a class="btn btn--secondary" href={url(`/work/${p.slug}`)}>
+          View case study<span class="visually-hidden">: {p.name}</span>
+        </a>
+      </div>
+    ))}
   </div>
 </div>
 
 <style>
   .carousel {
-    --stage-h: 470px;
+    --stage-h: 440px;
     display: flex;
     flex-direction: column;
   }
@@ -179,24 +177,29 @@ const imgSizes = '(max-width: 767px) 100vw, 520px';
     }
   }
 
-  /* ---------- Ticks ---------- */
-  .carousel__ticks {
+  /* ---------- Controls: same for every project, so the arrows never move ---------- */
+  .carousel__controls {
     display: flex;
     justify-content: center;
-    align-items: flex-end;
-    gap: 6px;
-    height: 14px;
-    margin-top: var(--space-4);
+    align-items: center;
+    gap: var(--space-6);
+    margin-top: var(--space-8);
+  }
+  .carousel__ticks {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 18px;
   }
   .carousel__tick {
     width: 2px;
-    height: 8px;
+    height: 10px;
     border-radius: 1px;
     background: var(--color-line);
     transition: height var(--dur-base) var(--ease-out), background-color var(--dur-base) var(--ease-out);
   }
   .carousel__tick.is-active {
-    height: 14px;
+    height: 18px;
     background: var(--color-secondary);
   }
 
@@ -210,6 +213,7 @@ const imgSizes = '(max-width: 767px) 100vw, 520px';
     padding-top: var(--space-6);
     border-top: 1px solid var(--color-line);
   }
+  .carousel__info { min-width: 0; }
   .carousel__title {
     display: flex;
     flex-wrap: wrap;
@@ -226,14 +230,14 @@ const imgSizes = '(max-width: 767px) 100vw, 520px';
   .carousel__desc { color: var(--color-secondary); }
   .carousel__meta { margin-top: var(--space-1); color: var(--color-secondary); }
 
-  .carousel__controls {
+  /* "View case study" is last and the block is right-aligned, so it keeps its place */
+  .carousel__actions {
     display: flex;
-    align-items: center;
-    gap: var(--space-3);
+    justify-content: flex-end;
     flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-left: auto;
   }
-  .carousel__arrows { display: flex; gap: var(--space-2); }
-  .carousel__actions { display: flex; gap: var(--space-3); flex-wrap: wrap; }
   .carousel__actions[hidden], .carousel__text[hidden] { display: none; }
 
   /* ---------- Tablet: side cards only ---------- */
@@ -247,11 +251,12 @@ const imgSizes = '(max-width: 767px) 100vw, 520px';
     .cf-card[data-slot='2']  { --x: 260px; }
     .cf-card[data-slot='-2'] { --x: -260px; }
 
-    .carousel__caption { flex-direction: column; align-items: stretch; }
   }
 
   /* ---------- Mobile: one card, no 3D ---------- */
   @media (max-width: 767px) {
+    .carousel__caption { flex-direction: column; align-items: stretch; gap: var(--space-4); }
+    .carousel__actions { justify-content: flex-start; margin-left: 0; }
     .carousel__stage {
       height: auto;
       aspect-ratio: 520 / 380;

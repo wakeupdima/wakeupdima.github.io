@@ -80,9 +80,10 @@ All states exist in Figma on `02 Design System`. Transitions: color/background/b
 **Project carousel** (cover-flow, 4 projects in a loop: SubTrack → Partwise → Vortex → Motionly)
 - Stage 1200 wide, ~520 high. Center card 520×380, radius 16, shadow.
 - Side cards 250×300 left/right (they tuck under the center card by ~100px), far cards 190×250 at opacity 0.8. In code use real 3D: `perspective: 1200px`, side cards `rotateY(±50deg)`, far cards `rotateY(±60deg)` + translateZ back. With 4 projects the far slot shows the same project on both sides (mirror) — acceptable, or show only one far card.
-- Under the stage: tick indicator (4 short bars, active one taller and darker), then the caption row:
+- Under the stage (32 gap): controls row, centered — Prev icon button, tick indicator (4 bars 2×10, active 2×18 and darker, pitch 10), Next icon button, gap 24. Identical for every project, so the arrows never move.
+- Caption row (32 below the controls, 1px line on top, padding-top 24, space-between):
   - Left: project name (H3-ish, primary) + one-line description (Body), meta line in Label style.
-  - Right: Prev / Next icon buttons (chevrons) + actions: "View case study" (Secondary) → `/work/<slug>`. Partwise also has "Visit website ↗" (Ghost, opens the live site in a new tab), placed right of "View case study".
+  - Right: actions only, right-aligned. "View case study" (Secondary) → `/work/<slug>` is always last. Partwise adds "Visit website ↗" (Ghost, new tab) to the left of it, gap 8.
 - Behaviour: Prev/Next buttons, click on a side card makes it active, ←/→ keys when the carousel has focus, swipe on touch. Transition `var(--dur-carousel)`. `aria-roledescription="carousel"`, each slide `aria-label="2 of 4"`, live region for the caption. Reduced motion: no 3D movement, crossfade.
 
 **Skills and tools** — padding 48/120/120/120, gap 48. H2 "Skills and tools". White panel (radius 12, 1px line, padding 40/48/48/48, gap 48):
@@ -130,7 +131,7 @@ Breakpoints: ≥1200 desktop (as designed) · 768–1199 tablet · <768 mobile (
 - Nav: same bar; under 480 hide the "Dmytro" text (keep the mark), link padding 8. Keep all three links and the CTA visible (no burger).
 - Hero: min-height 100svh on mobile; text first, portrait below at 280×340 (or hide it if it crowds the screen — check with Dmytro); left scrim becomes a full overlay at ~0.75.
 - Carousel: tablet — side cards only (no far cards), smaller center card; mobile — one card at a time, full width, swipe + arrows, no 3D.
-- Caption row stacks: text, then arrows + buttons in a wrapping row.
+- Controls row stays centered under the card; caption stacks: text, then the actions row (wraps if needed, "View case study" still last).
 - Skills and tools: shelves stack vertically; skill books wrap or scroll horizontally inside the shelf.
 - About card: one column, padding 24, photo after the text (full width, 4:5).
 - Case pages: under 1024 hide the Contents sidebar, single column with the gutter; meta row becomes a 2-column grid; images 100% wide.
