@@ -1,0 +1,65 @@
+/* Design tokens — exported from Figma collection "Portfolio Tokens" */
+:root {
+  /* Color */
+  --color-bg: #F4F4F2;            /* page background */
+  --color-surface: #E3E3E3;       /* plates, placeholders, shelf planks */
+  --color-white: #FFFFFF;
+  --color-primary: #406EB7;       /* blue: headings, primary buttons, links */
+  --color-primary-hover: #335A99;
+  --color-secondary: #0D1846;     /* navy: body text, footer, dark tiles */
+  --color-accent: #E95623;        /* orange: used sparingly (Paper tile, one skill book) */
+  --color-accent-hover: #D2481A;
+  --color-line: #D2D4DA;          /* 1px borders */
+  --color-hero-ink: #000C38;      /* hero scrim / dark base */
+
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-24: 96px;
+
+  /* Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  /* Layout */
+  --container: 1200px;
+  --gutter: 120px; /* desktop side padding at 1440 */
+
+  /* Typography */
+  --font-sans: "Space Grotesk", system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, monospace;
+
+  /* Text styles: size / line-height / weight / letter-spacing */
+  --text-display: 700 88px/88px var(--font-sans);   /* ls -0.03em */
+  --text-h2: 700 56px/58px var(--font-sans);        /* ls -0.03em */
+  --text-h3: 700 32px/36px var(--font-sans);        /* ls -0.02em */
+  --text-intro: 500 48px/60px var(--font-sans);     /* ls -0.02em */
+  --text-lead: 400 20px/30px var(--font-sans);
+  --text-body: 400 16px/24px var(--font-sans);
+  --text-button: 700 15px/20px var(--font-sans);
+  --text-label: 400 13px/16px var(--font-mono);     /* uppercase, ls 0.08em */
+  --text-label-strong: 600 13px/16px var(--font-mono);
+
+  /* Effects */
+  --shadow-card-hover: 0 16px 40px -8px rgb(13 24 70 / 0.18);
+  --shadow-modal: 0 24px 64px -16px rgb(13 24 70 / 0.20);
+  --shadow-plank: 0 10px 16px 0 rgb(13 24 70 / 0.08);
+  --focus-ring: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-secondary);
+
+  /* Motion */
+  --dur-fast: 150ms;
+  --dur-base: 200ms;
+  --dur-carousel: 450ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --dur-fast: 0ms; --dur-base: 0ms; --dur-carousel: 0ms; }
+}

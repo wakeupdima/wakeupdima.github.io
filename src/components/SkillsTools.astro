@@ -1,0 +1,191 @@
+---
+import Icon from './Icon.astro';
+import { shelves, skills } from '../data/skills';
+
+interface Props {
+  /** Section spacing: Home (48 / 120) or About (120 / 160) */
+  spacing?: 'home' | 'about';
+}
+
+const { spacing = 'home' } = Astro.props;
+---
+
+<section class:list={['skills', `skills--${spacing}`]} aria-labelledby="skills-title">
+  <div class="container skills__inner">
+    <h2 class="t-h2" id="skills-title">Skills and tools</h2>
+
+    <div class="library">
+      <div class="library__row">
+        {shelves.map((shelf) => (
+          <section class="shelf" style={`--count: ${shelf.tools.length}`} aria-labelledby={`shelf-${shelf.title.toLowerCase()}`}>
+            <h3 class="shelf__title" id={`shelf-${shelf.title.toLowerCase()}`}>{shelf.title}</h3>
+            <ul class="shelf__items shelf__items--tools">
+              {shelf.tools.map((tool) => (
+                <li class={`tile tone-${tool.tone}`}>
+                  <Icon name={tool.logo} set="logos" size={40} class="tile__logo" />
+                  <span class="tile__name">{tool.name}</span>
+                </li>
+              ))}
+            </ul>
+            <div class="shelf__plank" aria-hidden="true"></div>
+          </section>
+        ))}
+      </div>
+
+      <section class="shelf shelf--skills" aria-labelledby="shelf-skills">
+        <h3 class="shelf__title" id="shelf-skills">Skills</h3>
+        <div class="shelf__scroll">
+          <ul class="shelf__items shelf__items--books">
+            {skills.map((skill) => (
+              <li class={`book tone-${skill.tone}`} style={`--book-h: ${skill.height}px`}>
+                <span class="book__label">{skill.name}</span>
+              </li>
+            ))}
+          </ul>
+          <div class="shelf__plank" aria-hidden="true"></div>
+        </div>
+      </section>
+    </div>
+  </div>
+</section>
+
+<style>
+  .skills {
+    padding: var(--space-12) 0 120px;
+  }
+  .skills--about {
+    padding: 120px 0 160px;
+  }
+  .skills__inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+  }
+
+  .library {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+    padding: 40px var(--space-12) var(--space-12);
+    background: var(--color-white);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+  }
+  .library__row {
+    display: flex;
+    gap: 40px;
+  }
+
+  /* ---------- Shelf ---------- */
+  .shelf {
+    flex: var(--count, 1) 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .shelf__title {
+    padding-bottom: 22px;
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 500;
+    letter-spacing: 0;
+    color: var(--color-primary);
+  }
+  .shelf__items {
+    display: flex;
+    align-items: flex-end;
+    gap: 14px;
+    padding-inline: var(--space-3);
+  }
+  .shelf__plank {
+    height: 14px;
+    border-radius: 2px;
+    background: var(--color-surface);
+    box-shadow: var(--shadow-plank);
+  }
+
+  /* ---------- Tones ---------- */
+  .tone-navy    { --tone-bg: var(--color-secondary); --tone-fg: var(--color-white); --tone-stripe: var(--color-white); }
+  .tone-blue    { --tone-bg: var(--color-primary);   --tone-fg: var(--color-white); --tone-stripe: var(--color-white); }
+  .tone-surface { --tone-bg: var(--color-surface);   --tone-fg: var(--color-secondary); --tone-stripe: var(--color-secondary); }
+  .tone-light   { --tone-bg: var(--color-bg);        --tone-fg: var(--color-secondary); --tone-stripe: var(--color-secondary); --tone-border: var(--color-line); }
+  .tone-accent  { --tone-bg: var(--color-accent);    --tone-fg: var(--color-secondary); --tone-stripe: var(--color-secondary); }
+
+  /* ---------- Tool tile ---------- */
+  .tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 0 1 84px;
+    min-width: 0;
+    height: 120px;
+    padding: 24px 4px 12px;
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    background: var(--tone-bg);
+    color: var(--tone-fg);
+    box-shadow: inset 0 0 0 1px var(--tone-border, transparent);
+  }
+  .tile :global(.tile__logo) { flex: none; }
+  .tile__name {
+    margin-top: auto;
+    font-size: 12px;
+    line-height: 14px;
+    font-weight: 500;
+    text-align: center;
+  }
+
+  /* ---------- Skill book ---------- */
+  .shelf__scroll { display: flex; flex-direction: column; }
+  .shelf__items--books { min-height: 205px; }
+  .book {
+    position: relative;
+    flex: none;
+    width: 76px;
+    height: var(--book-h);
+    padding-top: 34px;
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    background: var(--tone-bg);
+    color: var(--tone-fg);
+    box-shadow: inset 0 0 0 1px var(--tone-border, transparent);
+    display: flex;
+    justify-content: center;
+  }
+  .book::before {
+    content: '';
+    position: absolute;
+    inset: 14px 0 auto;
+    height: 4px;
+    background: var(--tone-stripe);
+  }
+  .book__label {
+    writing-mode: vertical-rl;
+    font-size: 16px;
+    line-height: 20px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  /* ---------- Tablet ---------- */
+  @media (max-width: 1199px) {
+    .library__row { flex-direction: column; gap: var(--space-8); }
+    .shelf { flex: none; }
+    .shelf__scroll {
+      overflow-x: auto;
+      padding-bottom: var(--space-4);
+      margin-bottom: calc(-1 * var(--space-4));
+    }
+    .shelf__scroll > * { width: max-content; min-width: 100%; }
+  }
+
+  /* ---------- Mobile ---------- */
+  @media (max-width: 767px) {
+    .skills { padding: var(--space-8) 0 var(--space-16); }
+    .skills--about { padding: var(--space-16) 0 var(--space-16); }
+    .skills__inner, .library { gap: var(--space-8); }
+    .library { padding: var(--space-6) var(--space-4) var(--space-8); }
+    .shelf__items { gap: 8px; padding-inline: var(--space-2); }
+    .tile { flex-basis: 64px; height: 96px; padding-top: 18px; }
+    .tile :global(.tile__logo) { width: 32px; height: 32px; }
+    .tile__name { font-size: 11px; line-height: 13px; }
+  }
+</style>

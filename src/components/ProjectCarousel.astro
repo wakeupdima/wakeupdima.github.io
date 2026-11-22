@@ -1,0 +1,401 @@
+---
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import { projects } from '../data/projects';
+import { url } from '../lib/url';
+
+const total = projects.length;
+const imgWidths = [400, 520, 800, 1040];
+const imgSizes = '(max-width: 767px) 100vw, 520px';
+---
+
+<div class="carousel" data-carousel role="region" aria-roledescription="carousel" aria-label="Projects">
+  <div
+    class="carousel__stage"
+    tabindex="0"
+    aria-label="Project previews. Use the left and right arrow keys to switch projects."
+    data-stage
+  >
+    {projects.map((p, i) => (
+      <div
+        class="cf-card"
+        role="group"
+        aria-roledescription="slide"
+        aria-label={`${i + 1} of ${total}`}
+        data-card
+        data-index={i}
+        data-slot={i === 0 ? '0' : i === 1 ? '1' : i === total - 1 ? '-1' : '-2'}
+        aria-hidden={i === 0 ? undefined : 'true'}
+      >
+        <a class="cf-card__link" href={url(`/work/${p.slug}`)} tabindex="-1">
+          <Image
+            src={p.preview}
+            alt={p.previewAlt}
+            widths={imgWidths}
+            sizes={imgSizes}
+            class="cf-card__img"
+            loading="eager"
+            draggable="false"
+          />
+        </a>
+      </div>
+    ))}
+    {/* Mirror of the far card on the opposite side (decorative only) */}
+    <div class="cf-card cf-card--ghost" data-ghost data-slot="2" aria-hidden="true">
+      {projects.map((p, i) => (
+        <Image
+          src={p.preview}
+          alt=""
+          widths={imgWidths}
+          sizes={imgSizes}
+          class="cf-card__img"
+          loading="eager"
+          data-ghost-img={i}
+          hidden={i !== 2}
+          draggable="false"
+        />
+      ))}
+    </div>
+  </div>
+
+  <div class="carousel__ticks" aria-hidden="true">
+    {projects.map((_, i) => <span class:list={['carousel__tick', { 'is-active': i === 0 }]} data-tick={i}></span>)}
+  </div>
+
+  <div class="carousel__caption">
+    <div class="carousel__info" aria-live="polite" aria-atomic="true">
+      {projects.map((p, i) => (
+        <div class="carousel__text" data-caption={i} hidden={i !== 0}>
+          <p class="carousel__title">
+            <span class="carousel__name">{p.name}</span>
+            <span class="carousel__desc">{p.description}</span>
+          </p>
+          <p class="t-label carousel__meta">{p.meta.join(' · ')}</p>
+        </div>
+      ))}
+    </div>
+
+    <div class="carousel__controls">
+      <div class="carousel__arrows">
+        <button type="button" class="icon-btn" aria-label="Previous project" data-prev>
+          <Icon name="chevron-left" />
+        </button>
+        <button type="button" class="icon-btn" aria-label="Next project" data-next>
+          <Icon name="chevron-right" />
+        </button>
+      </div>
+      {projects.map((p, i) => (
+        <div class="carousel__actions" data-actions={i} hidden={i !== 0}>
+          <a class="btn btn--secondary" href={url(`/work/${p.slug}`)}>
+            View case study<span class="visually-hidden">: {p.name}</span>
+          </a>
+          {p.website && (
+            <a class="btn btn--ghost" href={p.website} target="_blank" rel="noopener">
+              Visit website ↗<span class="visually-hidden"> (opens in a new tab)</span>
+            </a>
+          )}
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
+
+<style>
+  .carousel {
+    --stage-h: 470px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ---------- Stage ---------- */
+  .carousel__stage {
+    position: relative;
+    height: var(--stage-h);
+    perspective: 1200px;
+    transform-style: preserve-3d;
+    touch-action: pan-y;
+    user-select: none;
+    border-radius: var(--radius-lg);
+  }
+
+  .cf-card {
+    /* slot geometry, set per data-slot below */
+    --w: 520px;
+    --h: 380px;
+    --x: 0px;
+    --z: 0px;
+    --ry: 0deg;
+    --o: 1;
+    --zi: 5;
+
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: var(--w);
+    height: var(--h);
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--color-surface);
+    opacity: var(--o);
+    z-index: var(--zi);
+    transform: translate(-50%, -50%) translateX(var(--x)) translateZ(var(--z)) rotateY(var(--ry));
+    transition:
+      width var(--dur-carousel) var(--ease-out),
+      height var(--dur-carousel) var(--ease-out),
+      transform var(--dur-carousel) var(--ease-out),
+      opacity var(--dur-carousel) var(--ease-out),
+      box-shadow var(--dur-base) var(--ease-out);
+    cursor: pointer;
+  }
+  .cf-card[data-slot='0'] {
+    box-shadow: var(--shadow-card-hover);
+    cursor: auto;
+  }
+  .cf-card[data-slot='1']  { --w: 250px; --h: 300px; --x: 330px;  --z: -60px;  --ry: -50deg; --zi: 4; }
+  .cf-card[data-slot='-1'] { --w: 250px; --h: 300px; --x: -330px; --z: -60px;  --ry: 50deg;  --zi: 4; }
+  .cf-card[data-slot='2']  { --w: 190px; --h: 250px; --x: 500px;  --z: -160px; --ry: -60deg; --zi: 2; --o: 0.8; }
+  .cf-card[data-slot='-2'] { --w: 190px; --h: 250px; --x: -500px; --z: -160px; --ry: 60deg;  --zi: 2; --o: 0.8; }
+  .cf-card--ghost { z-index: 1; }
+
+  .cf-card__link {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+  }
+  .cf-card:not([data-slot='0']) .cf-card__link { pointer-events: none; }
+  .cf-card :global(.cf-card__img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    -webkit-user-drag: none;
+  }
+
+  @media (hover: hover) {
+    .cf-card[data-slot='0']:hover {
+      transform: translate(-50%, -50%) translateY(-4px);
+      box-shadow: var(--shadow-card-hover), var(--shadow-card-hover);
+    }
+  }
+
+  /* ---------- Ticks ---------- */
+  .carousel__ticks {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 6px;
+    height: 14px;
+    margin-top: var(--space-4);
+  }
+  .carousel__tick {
+    width: 2px;
+    height: 8px;
+    border-radius: 1px;
+    background: var(--color-line);
+    transition: height var(--dur-base) var(--ease-out), background-color var(--dur-base) var(--ease-out);
+  }
+  .carousel__tick.is-active {
+    height: 14px;
+    background: var(--color-secondary);
+  }
+
+  /* ---------- Caption ---------- */
+  .carousel__caption {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-6);
+    margin-top: var(--space-8);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--color-line);
+  }
+  .carousel__title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: var(--space-3);
+  }
+  .carousel__name {
+    font-size: 24px;
+    line-height: 32px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--color-primary);
+  }
+  .carousel__desc { color: var(--color-secondary); }
+  .carousel__meta { margin-top: var(--space-1); color: var(--color-secondary); }
+
+  .carousel__controls {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
+  .carousel__arrows { display: flex; gap: var(--space-2); }
+  .carousel__actions { display: flex; gap: var(--space-3); flex-wrap: wrap; }
+  .carousel__actions[hidden], .carousel__text[hidden] { display: none; }
+
+  /* ---------- Tablet: side cards only ---------- */
+  @media (max-width: 1199px) {
+    .carousel { --stage-h: 400px; }
+    .cf-card { --w: 440px; --h: 320px; }
+    .cf-card[data-slot='1']  { --w: 200px; --h: 250px; --x: 260px; }
+    .cf-card[data-slot='-1'] { --w: 200px; --h: 250px; --x: -260px; }
+    .cf-card[data-slot='2'],
+    .cf-card[data-slot='-2'] { --w: 200px; --h: 250px; --o: 0; --zi: 1; pointer-events: none; }
+    .cf-card[data-slot='2']  { --x: 260px; }
+    .cf-card[data-slot='-2'] { --x: -260px; }
+
+    .carousel__caption { flex-direction: column; align-items: stretch; }
+  }
+
+  /* ---------- Mobile: one card, no 3D ---------- */
+  @media (max-width: 767px) {
+    .carousel__stage {
+      height: auto;
+      aspect-ratio: 520 / 380;
+      overflow: hidden;
+      border-radius: 16px;
+    }
+    .cf-card,
+    .cf-card[data-slot] {
+      --w: 100%;
+      --h: 100%;
+      --z: 0px;
+      --ry: 0deg;
+    }
+    .cf-card[data-slot='0'] { box-shadow: none; }
+    .cf-card[data-slot='1'],
+    .cf-card[data-slot='2']  { --x: 100%; --o: 0; }
+    .cf-card[data-slot='-1'],
+    .cf-card[data-slot='-2'] { --x: -100%; --o: 0; }
+    .cf-card:not([data-slot='0']) { pointer-events: none; }
+    .cf-card {
+      transform: translate(-50%, -50%) translateX(var(--x));
+    }
+  }
+
+  /* ---------- Reduced motion: no 3D, crossfade ---------- */
+  @media (prefers-reduced-motion: reduce) {
+    .cf-card,
+    .cf-card[data-slot] {
+      --x: 0px;
+      --z: 0px;
+      --ry: 0deg;
+    }
+    .cf-card:not([data-slot='0']) { --o: 0; pointer-events: none; }
+    .cf-card { transition: opacity 200ms linear; }
+    .cf-card[data-slot='0']:hover { transform: translate(-50%, -50%); }
+  }
+</style>
+
+<script>
+  function setupCarousel(root: HTMLElement) {
+    const cards = Array.from(root.querySelectorAll<HTMLElement>('[data-card]'));
+    const ghost = root.querySelector<HTMLElement>('[data-ghost]');
+    const ghostImgs = Array.from(root.querySelectorAll<HTMLElement>('[data-ghost-img]'));
+    const ticks = Array.from(root.querySelectorAll<HTMLElement>('[data-tick]'));
+    const captions = Array.from(root.querySelectorAll<HTMLElement>('[data-caption]'));
+    const actions = Array.from(root.querySelectorAll<HTMLElement>('[data-actions]'));
+    const stage = root.querySelector<HTMLElement>('[data-stage]')!;
+    const n = cards.length;
+
+    let active = 0;
+    // Which side the far card (offset 2) sits on; the ghost mirrors it on the other side.
+    let farSide: 1 | -1 = -1;
+
+    const offset = (i: number) => {
+      let d = (i - active + n) % n;
+      if (d > n / 2) d -= n;
+      return d;
+    };
+
+    function render() {
+      cards.forEach((card, i) => {
+        const d = offset(i);
+        const slot = Math.abs(d) === 2 ? farSide * 2 : d;
+        card.dataset.slot = String(slot);
+        const isActive = d === 0;
+        if (isActive) card.removeAttribute('aria-hidden');
+        else card.setAttribute('aria-hidden', 'true');
+      });
+
+      const farIndex = (active + 2) % n;
+      if (ghost) ghost.dataset.slot = String(-farSide * 2);
+      ghostImgs.forEach((img, i) => (img.hidden = i !== farIndex));
+
+      ticks.forEach((t, i) => t.classList.toggle('is-active', i === active));
+      captions.forEach((c, i) => (c.hidden = i !== active));
+      actions.forEach((a, i) => (a.hidden = i !== active));
+    }
+
+    function step(dir: 1 | -1) {
+      // The far card is about to swing to the side it emerges on: move it there first, without animation.
+      const far = cards.find((_, i) => Math.abs(offset(i)) === 2);
+      if (far && farSide !== dir) {
+        far.style.transition = 'none';
+        far.dataset.slot = String(dir * 2);
+        void far.offsetWidth;
+        far.style.transition = '';
+      }
+      active = (active + dir + n) % n;
+      farSide = dir === 1 ? -1 : 1;
+      render();
+    }
+
+    root.querySelector('[data-prev]')?.addEventListener('click', () => step(-1));
+    root.querySelector('[data-next]')?.addEventListener('click', () => step(1));
+
+    root.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') { e.preventDefault(); step(-1); }
+      if (e.key === 'ArrowRight') { e.preventDefault(); step(1); }
+    });
+
+    // Click on a side card brings it to the center.
+    let suppressClick = false;
+    stage.addEventListener('click', (e) => {
+      if (suppressClick) { e.preventDefault(); suppressClick = false; return; }
+      const target = e.target as HTMLElement;
+      if (target.closest('[data-ghost]')) {
+        e.preventDefault();
+        step(-farSide as 1 | -1);
+        step(-farSide as 1 | -1);
+        return;
+      }
+      const card = target.closest<HTMLElement>('[data-card]');
+      if (!card) return;
+      const d = offset(Number(card.dataset.index));
+      if (d === 0) return;
+      e.preventDefault();
+      if (Math.abs(d) === 1) step(d as 1 | -1);
+      else { step(farSide); step(farSide); }
+    });
+
+    // Swipe
+    let startX = 0;
+    let startY = 0;
+    let tracking = false;
+    stage.addEventListener('pointerdown', (e) => {
+      tracking = true;
+      startX = e.clientX;
+      startY = e.clientY;
+    });
+    stage.addEventListener('pointerup', (e) => {
+      if (!tracking) return;
+      tracking = false;
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+        suppressClick = true;
+        step(dx < 0 ? 1 : -1);
+        setTimeout(() => (suppressClick = false), 0);
+      }
+    });
+    stage.addEventListener('pointercancel', () => (tracking = false));
+
+    render();
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-carousel]').forEach(setupCarousel);
+</script>

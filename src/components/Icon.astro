@@ -1,0 +1,31 @@
+---
+/**
+ * Inlines an SVG from src/assets/{icons,logos} and recolors it to currentColor,
+ * so icons follow the surrounding text color.
+ */
+interface Props {
+  name: string;
+  set?: 'icons' | 'logos';
+  size?: number;
+  class?: string;
+}
+
+const files = import.meta.glob<string>('../assets/{icons,logos}/*.svg', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+});
+
+const { name, set = 'icons', size = 20, class: className } = Astro.props;
+const raw = files[`../assets/${set}/${name}.svg`];
+if (!raw) throw new Error(`Icon not found: ${set}/${name}`);
+
+const svg = raw
+  .replace(/(fill|stroke)="(?!none)[^"]*"/g, '$1="currentColor"')
+  .replace(
+    /<svg([^>]*?)\swidth="[^"]*"\sheight="[^"]*"/,
+    `<svg$1 width="${size}" height="${size}" aria-hidden="true" focusable="false"${className ? ` class="${className}"` : ''}`,
+  );
+---
+
+<Fragment set:html={svg} />

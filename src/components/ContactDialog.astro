@@ -1,0 +1,181 @@
+---
+import Icon from './Icon.astro';
+import { contacts } from '../data/site';
+
+const options = [contacts.telegram, contacts.email, contacts.behance];
+---
+
+<dialog class="contact" id="contact-dialog" aria-labelledby="contact-title" aria-describedby="contact-desc">
+  <div class="contact__panel">
+    <div class="contact__head">
+      <div>
+        <h2 class="t-h3 contact__title" id="contact-title">Let's talk</h2>
+        <p class="contact__desc" id="contact-desc">Choose how you'd like to reach me.</p>
+      </div>
+      <button type="button" class="icon-btn contact__close" aria-label="Close" data-contact-close>
+        <Icon name="close" />
+      </button>
+    </div>
+    <ul class="contact__options">
+      {options.map((opt) => {
+        const external = opt.href.startsWith('http');
+        return (
+          <li>
+            <a
+              class="contact-option"
+              href={opt.href}
+              {...(external ? { target: '_blank', rel: 'noopener' } : {})}
+            >
+              <span class="contact-option__icon"><Icon name={opt.icon} /></span>
+              <span class="contact-option__text">
+                <span class="contact-option__label">{opt.label}</span>
+                <span class="contact-option__value">{opt.value}</span>
+              </span>
+              <span class="contact-option__arrow"><Icon name="arrow-up-right" /></span>
+              {external && <span class="visually-hidden"> (opens in a new tab)</span>}
+            </a>
+          </li>
+        );
+      })}
+    </ul>
+  </div>
+</dialog>
+
+<style>
+  .contact {
+    width: 440px;
+    max-width: calc(100vw - 32px);
+    max-height: calc(100dvh - 32px);
+    margin: auto;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-lg);
+    background: var(--color-white);
+    color: var(--color-secondary);
+    box-shadow: var(--shadow-modal);
+    opacity: 0;
+    transform: translateY(8px);
+    transition:
+      opacity var(--dur-base) var(--ease-out),
+      transform var(--dur-base) var(--ease-out),
+      overlay var(--dur-base) allow-discrete,
+      display var(--dur-base) allow-discrete;
+  }
+  .contact[open] { opacity: 1; transform: none; }
+  @starting-style {
+    .contact[open] { opacity: 0; transform: translateY(8px); }
+  }
+
+  .contact::backdrop {
+    background: color-mix(in srgb, var(--color-secondary) 50%, transparent);
+    opacity: 0;
+    transition:
+      opacity var(--dur-base) var(--ease-out),
+      overlay var(--dur-base) allow-discrete,
+      display var(--dur-base) allow-discrete;
+  }
+  .contact[open]::backdrop { opacity: 1; }
+  @starting-style {
+    .contact[open]::backdrop { opacity: 0; }
+  }
+
+  .contact__panel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    padding: var(--space-8);
+  }
+  .contact__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-4);
+  }
+  .contact__title { color: var(--color-secondary); }
+  .contact__desc {
+    margin-top: var(--space-2);
+    color: color-mix(in srgb, var(--color-secondary) 70%, transparent);
+  }
+  .contact__close { margin: -6px -6px 0 0; }
+
+  .contact__options {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .contact-option {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    min-height: 64px;
+    padding: var(--space-3) var(--space-4) var(--space-3) var(--space-3);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-md);
+    transition:
+      background-color var(--dur-base) var(--ease-out),
+      border-color var(--dur-base) var(--ease-out),
+      box-shadow var(--dur-base) var(--ease-out);
+  }
+  .contact-option:hover { background: var(--color-bg); border-color: var(--color-primary); }
+
+  .contact-option__icon {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    flex: none;
+    border-radius: var(--radius-md);
+    background: var(--color-bg);
+  }
+  .contact-option:hover .contact-option__icon { background: var(--color-white); }
+
+  .contact-option__text {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+  }
+  .contact-option__label { font-weight: 500; }
+  .contact-option__value {
+    font: var(--text-label);
+    color: color-mix(in srgb, var(--color-secondary) 60%, transparent);
+    overflow-wrap: anywhere;
+  }
+  .contact-option__arrow {
+    opacity: 0.4;
+    transition: opacity var(--dur-base) var(--ease-out);
+  }
+  .contact-option:hover .contact-option__arrow { opacity: 1; }
+
+  @media (max-width: 479px) {
+    .contact__panel { padding: var(--space-6); }
+  }
+</style>
+
+<script>
+  const dialog = document.getElementById('contact-dialog') as HTMLDialogElement | null;
+  let trigger: HTMLElement | null = null;
+
+  if (dialog) {
+    document.addEventListener('click', (event) => {
+      const opener = (event.target as HTMLElement).closest<HTMLElement>('[data-contact-open]');
+      if (!opener) return;
+      trigger = opener;
+      dialog.showModal();
+      dialog.querySelector<HTMLElement>('.contact-option')?.focus();
+    });
+
+    dialog.querySelector('[data-contact-close]')?.addEventListener('click', () => dialog.close());
+
+    // Click on the backdrop: the click lands on the <dialog> itself, outside the panel.
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog) dialog.close();
+    });
+
+    dialog.addEventListener('close', () => {
+      trigger?.focus();
+      trigger = null;
+    });
+  }
+</script>

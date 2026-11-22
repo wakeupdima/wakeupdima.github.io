@@ -1,0 +1,121 @@
+---
+import { url } from '../lib/url';
+import { resumeHref } from '../data/site';
+
+interface Props {
+  /** Which link is the current page */
+  current?: 'home' | 'about' | 'work';
+  /** Float over the hero image instead of sitting in the page flow */
+  overlay?: boolean;
+}
+
+const { current, overlay = false } = Astro.props;
+---
+
+<header class:list={['site-header', { 'site-header--overlay': overlay }]}>
+  <nav class="nav" aria-label="Main">
+    <a class="nav__logo" href={url('/')} aria-current={current === 'home' ? 'page' : undefined}>
+      <span class="nav__mark" aria-hidden="true">DZ</span>
+      <span class="nav__name">Dmytro</span>
+    </a>
+    <ul class="nav__links">
+      <li><a class="nav__link" href={url('/#work')}>Work</a></li>
+      <li>
+        <a class="nav__link" href={url('/about')} aria-current={current === 'about' ? 'page' : undefined}>About</a>
+      </li>
+      <li>
+        <a class="nav__link" href={url(resumeHref)} target="_blank" rel="noopener">
+          Resume<span class="visually-hidden"> (opens in a new tab)</span>
+        </a>
+      </li>
+    </ul>
+    <button type="button" class="btn btn--secondary btn--sm nav__cta" data-contact-open>Let's talk</button>
+  </nav>
+</header>
+
+<style>
+  .site-header {
+    display: flex;
+    justify-content: center;
+    padding: var(--space-6) var(--space-4) 0;
+    position: relative;
+    z-index: 10;
+  }
+  .site-header--overlay {
+    position: absolute;
+    inset: 0 0 auto;
+  }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+    height: 52px;
+    padding: 6px 6px 6px var(--space-4);
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+  }
+  .site-header:not(.site-header--overlay) .nav {
+    border: 1px solid var(--color-line);
+  }
+
+  .nav__logo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-weight: 700;
+    font-size: 15px;
+    line-height: 20px;
+    color: var(--color-secondary);
+    border-radius: var(--radius-sm);
+  }
+  /* Figma shows the name only; the mark replaces it on narrow screens. */
+  .nav__mark {
+    display: none;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-sm);
+    background: var(--color-primary);
+    color: var(--color-white);
+    font-size: 11px;
+    letter-spacing: 0.02em;
+  }
+
+  .nav__links {
+    display: flex;
+    gap: var(--space-1);
+  }
+  .nav__link {
+    display: block;
+    padding: 10px var(--space-3);
+    border-radius: var(--radius-md);
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 20px;
+    color: var(--color-secondary);
+    transition: background-color var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out);
+  }
+  .nav__link:hover { background: var(--color-bg); }
+  .nav__link[aria-current='page'] {
+    background: var(--color-bg);
+    color: var(--color-primary);
+    font-weight: 700;
+  }
+
+  @media (max-width: 767px) {
+    .site-header { padding-top: var(--space-4); }
+    .nav { gap: var(--space-4); }
+  }
+
+  @media (max-width: 479px) {
+    .site-header { padding-inline: var(--space-3); }
+    .nav { gap: var(--space-2); padding-left: 10px; }
+    .nav__name { display: none; }
+    .nav__mark { display: grid; }
+    .nav__logo { padding: 10px 4px; }
+    .nav__links { gap: 0; }
+    .nav__link { padding: 12px var(--space-2); }
+    .nav__cta { padding-inline: var(--space-3); }
+  }
+</style>

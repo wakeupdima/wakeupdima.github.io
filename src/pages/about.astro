@@ -1,0 +1,133 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Nav from '../components/Nav.astro';
+import SkillsTools from '../components/SkillsTools.astro';
+import portrait from '../assets/home/portrait.png';
+import { url } from '../lib/url';
+import { resumeHref } from '../data/site';
+---
+
+<BaseLayout title="About — Dmytro Zaichenko" description="UI/UX designer and student based in Kyiv.">
+  <Nav slot="header" current="about" />
+
+  <div class="container about-title">
+    <h1 class="t-display">About me</h1>
+  </div>
+
+  <section class="container about-card" aria-labelledby="about-heading">
+    <div class="about-card__text">
+      <h2 class="about-card__heading" id="about-heading">Hi there, I’m Dmytro Zaichenko!</h2>
+      <div class="about-card__paragraphs t-lead">
+        <p>
+          I’m a UI/UX designer and a student based in Kyiv. I started out learning JavaScript and thought I’d become a
+          frontend developer. Somewhere along the way I noticed I enjoyed figuring out how a screen should work more than
+          writing the code behind it, so I switched to design.
+        </p>
+        <p>
+          Before UX/UI I did small freelance graphic design jobs, including a website redesign for a singer. Now I work on
+          product projects end to end: research, user flows, wireframes, UI and usability testing. SubTrack went through
+          two moderated testing sessions and five iterations.
+        </p>
+        <p>
+          I also designed Partwise, a concept B2B website for sourcing electronic components in Ukraine. It started with a
+          competitor review and a UX audit, and ended as a live site built with AI tools.
+        </p>
+      </div>
+      <div class="about-card__actions">
+        <button type="button" class="btn btn--secondary" data-contact-open>Let's talk</button>
+        <a class="btn btn--ghost" href={url(resumeHref)} target="_blank" rel="noopener">
+          Resume ↗<span class="visually-hidden"> (opens in a new tab)</span>
+        </a>
+      </div>
+    </div>
+
+    <Image
+      src={portrait}
+      alt="Portrait of Dmytro Zaichenko"
+      widths={[420, 840]}
+      sizes="(max-width: 1023px) calc(100vw - 88px), 420px"
+      loading="eager"
+      class="about-card__photo"
+    />
+  </section>
+
+  <SkillsTools spacing="about" />
+</BaseLayout>
+
+<style>
+  .about-title {
+    padding: var(--space-24) 0 var(--space-16);
+    text-align: center;
+  }
+  .about-title h1 { color: var(--color-secondary); }
+
+  .about-card {
+    display: flex;
+    align-items: center;
+    gap: 72px;
+    padding: 80px;
+    background: var(--color-white);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+  }
+  .about-card__text {
+    flex: 1;
+    min-width: 0;
+    max-width: 546px;
+  }
+  .about-card__heading {
+    font-size: var(--fs-h2-case);
+    line-height: 48px;
+    letter-spacing: -0.03em;
+    color: var(--color-secondary);
+    text-wrap: wrap;
+  }
+  .about-card__paragraphs {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    margin-top: var(--space-8);
+    color: color-mix(in srgb, var(--color-secondary) 85%, transparent);
+  }
+  .about-card__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-8);
+  }
+
+  .about-card :global(.about-card__photo) {
+    flex: none;
+    width: 420px;
+    height: 520px;
+    margin-left: auto;
+    object-fit: cover;
+    border-radius: var(--radius-lg);
+  }
+
+  @media (max-width: 1199px) {
+    .about-card { padding: 48px; gap: 48px; }
+    .about-card :global(.about-card__photo) { width: 320px; height: 396px; }
+  }
+
+  /* One column: text first, photo after it */
+  @media (max-width: 1023px) {
+    .about-card { flex-direction: column; align-items: stretch; }
+    .about-card__text { max-width: none; }
+    .about-card :global(.about-card__photo) {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 4 / 5;
+      margin-left: 0;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .about-title { padding: var(--space-16) 0 var(--space-8); }
+    .about-card { padding: var(--space-6); gap: var(--space-8); }
+    .about-card__heading { line-height: 34px; }
+    .about-card__paragraphs { gap: var(--space-4); margin-top: var(--space-6); }
+    .about-card__actions { margin-top: var(--space-6); }
+  }
+</style>

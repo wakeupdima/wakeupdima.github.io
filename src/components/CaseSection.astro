@@ -1,0 +1,145 @@
+---
+import { Image } from 'astro:assets';
+import type { Section } from '../data/cases/types';
+
+interface Props {
+  section: Section;
+}
+
+const { section } = Astro.props;
+const imgWidths = [450, 900, 1350, 1800];
+const imgSizes = '(max-width: 1023px) calc(100vw - 40px), 900px';
+---
+
+<section class="case-section" id={section.id} aria-labelledby={`${section.id}-title`}>
+  <h2 class="t-h2-case" id={`${section.id}-title`}>{section.title}</h2>
+
+  {section.blocks.map((block) => {
+    switch (block.type) {
+      case 'p':
+        return <p class="case-text">{block.text}</p>;
+      case 'list':
+        return (
+          <ul class="case-text case-list">
+            {block.items.map((item) => <li>{item}</li>)}
+          </ul>
+        );
+      case 'image':
+        return (
+          <Image
+            src={block.image.src}
+            alt={block.image.alt}
+            widths={imgWidths}
+            sizes={imgSizes}
+            class="case-img"
+          />
+        );
+      case 'strip':
+        return (
+          <div class="case-strip">
+            {block.images.map((image) => (
+              <Image src={image.src} alt={image.alt} widths={imgWidths} sizes={imgSizes} />
+            ))}
+          </div>
+        );
+      case 'cards':
+        return (
+          <ul class="case-cards">
+            {block.cards.map((card) => (
+              <li class="case-card">
+                <h3 class="case-card__title">{card.title}</h3>
+                <p>{card.text}</p>
+              </li>
+            ))}
+          </ul>
+        );
+      case 'buttons':
+        return (
+          <div class="case-buttons">
+            {block.buttons.map((b) => (
+              <a class:list={['btn', `btn--${b.variant}`]} href={b.href} target="_blank" rel="noopener">
+                {b.label}
+                <span class="visually-hidden"> (opens in a new tab)</span>
+              </a>
+            ))}
+          </div>
+        );
+    }
+  })}
+</section>
+
+<style>
+  .case-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    scroll-margin-top: var(--space-24);
+  }
+  .case-section > h2 { margin-bottom: 0; }
+
+  .case-text {
+    max-width: 760px;
+    font-size: 18px;
+    line-height: 30px;
+    color: var(--color-secondary);
+  }
+
+  .case-list li {
+    position: relative;
+    padding-left: 1.5em;
+  }
+  .case-list li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+  }
+
+  .case-section :global(.case-img),
+  .case-strip {
+    width: 100%;
+    border: 1px solid var(--color-line);
+    border-radius: 16px;
+    background: var(--color-white);
+  }
+  .case-strip {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .case-strip :global(img) { width: 100%; }
+
+  .case-cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+  }
+  .case-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: var(--space-6);
+    background: var(--color-white);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+  }
+  .case-card__title {
+    font-size: 24px;
+    line-height: 28px;
+    letter-spacing: -0.02em;
+  }
+
+  .case-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  @media (max-width: 767px) {
+    .case-section { gap: var(--space-4); }
+    .case-text { font-size: 17px; line-height: 26px; }
+    .case-section :global(.case-img),
+    .case-strip { border-radius: var(--radius-lg); }
+    .case-cards { grid-template-columns: 1fr; }
+    .case-card__title { font-size: 22px; }
+  }
+</style>

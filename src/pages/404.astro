@@ -1,0 +1,51 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Nav from '../components/Nav.astro';
+import { url } from '../lib/url';
+---
+
+<BaseLayout title="Page not found — Dmytro Zaichenko" description="This page does not exist.">
+  <Nav slot="header" />
+
+  <section class="container not-found" aria-labelledby="nf-title">
+    <p class="t-label not-found__code" aria-hidden="true">404</p>
+    <h1 class="t-display" id="nf-title">Page not found</h1>
+    <p class="t-lead not-found__text">This page does not exist or has moved.</p>
+    <div class="not-found__actions">
+      <a class="btn btn--secondary" href={url('/')}>Back to home</a>
+      <a class="btn btn--ghost" href={url('/#work')}>See projects</a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .not-found {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 160px 0 200px;
+  }
+  .not-found__code {
+    margin-bottom: var(--space-6);
+    padding: 6px 10px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-sm);
+    background: var(--color-white);
+  }
+  .not-found h1 { color: var(--color-secondary); }
+  .not-found__text {
+    margin-top: var(--space-4);
+    color: color-mix(in srgb, var(--color-secondary) 85%, transparent);
+  }
+  .not-found__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-3);
+    margin-top: var(--space-8);
+  }
+  @media (max-width: 767px) {
+    .not-found { padding: 96px 0 120px; }
+  }
+</style>

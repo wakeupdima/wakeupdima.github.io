@@ -1,0 +1,133 @@
+---
+import type { Section } from '../data/cases/types';
+
+interface Props {
+  sections: Section[];
+}
+
+const { sections } = Astro.props;
+---
+
+<nav class="toc" aria-labelledby="toc-title" data-toc>
+  <p class="toc__title" id="toc-title">Contents</p>
+  <span class="toc__tick" aria-hidden="true"></span>
+  <ul class="toc__list">
+    {sections.map((s, i) => (
+      <li>
+        <a class="toc__link" href={`#${s.id}`} data-toc-link={s.id} aria-current={i === 0 ? 'true' : undefined}>
+          {s.title}
+        </a>
+      </li>
+    ))}
+  </ul>
+  <span class="toc__tick" aria-hidden="true"></span>
+  <a class="toc__top" href="#top">Back to top ↑</a>
+</nav>
+
+<style>
+  .toc {
+    position: sticky;
+    top: var(--space-24);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .toc__title {
+    padding-top: var(--space-2);
+    font-weight: 700;
+    color: var(--color-primary);
+  }
+  .toc__tick {
+    display: block;
+    width: 1px;
+    height: 12px;
+    margin-block: var(--space-1);
+    background: var(--color-line);
+  }
+  .toc__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    width: 100%;
+  }
+  .toc__link {
+    position: relative;
+    display: block;
+    padding: 6px 0 6px 14px;
+    font-size: 15px;
+    line-height: 20px;
+    color: var(--color-secondary);
+    border-radius: var(--radius-sm);
+    transition: color var(--dur-base) var(--ease-out);
+  }
+  .toc__link::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 7px;
+    width: 2px;
+    height: 18px;
+    border-radius: 1px;
+    background: var(--color-line);
+    transition: background-color var(--dur-base) var(--ease-out);
+  }
+  .toc__link:hover { color: var(--color-primary); }
+  .toc__link[aria-current='true'] {
+    color: var(--color-primary);
+    font-weight: 700;
+  }
+  .toc__link[aria-current='true']::before { background: var(--color-primary); }
+
+  .toc__top {
+    padding-block: 6px;
+    font-size: 15px;
+    line-height: 20px;
+    color: var(--color-primary);
+    border-radius: var(--radius-sm);
+  }
+  .toc__top:hover { text-decoration: underline; text-underline-offset: 0.2em; }
+</style>
+
+<script>
+  const toc = document.querySelector<HTMLElement>('[data-toc]');
+  if (toc) {
+    const links = Array.from(toc.querySelectorAll<HTMLAnchorElement>('[data-toc-link]'));
+    const sections = links
+      .map((link) => document.getElementById(link.dataset.tocLink!))
+      .filter((el): el is HTMLElement => el !== null);
+
+    let ticking = false;
+
+    function update() {
+      ticking = false;
+      const line = window.innerHeight * 0.35;
+      let active = 0;
+      sections.forEach((section, i) => {
+        if (section.getBoundingClientRect().top <= line) active = i;
+      });
+      // At the very bottom of the page, highlight the last section.
+      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) {
+        active = sections.length - 1;
+      }
+      links.forEach((link, i) => {
+        if (i === active) link.setAttribute('aria-current', 'true');
+        else link.removeAttribute('aria-current');
+      });
+    }
+
+    // IntersectionObserver wakes the check when sections cross the viewport; scroll keeps it precise.
+    const observer = new IntersectionObserver(() => update(), { rootMargin: '-35% 0px -60% 0px' });
+    sections.forEach((s) => observer.observe(s));
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(update);
+        }
+      },
+      { passive: true },
+    );
+    update();
+  }
+</script>

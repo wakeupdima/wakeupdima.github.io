@@ -1,0 +1,37 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Nav from '../components/Nav.astro';
+import Hero from '../components/Hero.astro';
+import ProjectCarousel from '../components/ProjectCarousel.astro';
+import SkillsTools from '../components/SkillsTools.astro';
+---
+
+<BaseLayout>
+  <Nav slot="header" current="home" overlay />
+  <Hero />
+
+  <section class="projects" id="work" aria-labelledby="projects-title">
+    <div class="container projects__inner">
+      <h2 class="t-h2" id="projects-title">My projects</h2>
+      <ProjectCarousel />
+    </div>
+  </section>
+
+  <SkillsTools />
+</BaseLayout>
+
+<style>
+  .projects {
+    padding: var(--section-y) 0;
+    overflow-x: clip;
+    scroll-margin-top: 0;
+  }
+  .projects__inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+  }
+  @media (max-width: 767px) {
+    .projects__inner { gap: var(--space-8); }
+  }
+</style>
